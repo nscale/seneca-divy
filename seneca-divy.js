@@ -21,13 +21,14 @@ const Wreck = require('@hapi/wreck')
 const _ = require('lodash')
 const resolvePinTable = require('./lib/resolve-pin-table')
 
-const PORT = process.env.PORT || 40000
-const HOST = process.env.HOST || '127.0.0.1'
-const PROXY_HTTP_PORT = process.env.PROXY_HTTP_PORT || 10000
-const PROXY_HTTP_HOST = process.env.PROXY_HTTP_HOST || 'localhost'
-
 function divy(opts) {
   const seneca = this
+  const PORT = opts.port || process.env.PORT || 40000
+  const HOST = opts.host || process.env.HOST || '127.0.0.1'
+  const PROXY_HTTP_PORT = opts.proxyPort || process.env.PROXY_HTTP_PORT || 10000
+  const PROXY_HTTP_HOST =
+    opts.proxyHost || process.env.PROXY_HTTP_HOST || 'localhost'
+
   const http = Fastify()
   const tu = seneca.export('transport/utils')
   const pintable = resolvePinTable(opts.listen)
