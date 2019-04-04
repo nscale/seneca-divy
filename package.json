@@ -1,0 +1,23 @@
+{
+  "name": "seneca-divy",
+  "version": "0.1.0",
+  "description": "A seneca plugin to intergrate with the divy service mesh",
+  "main": "seneca-divy.js",
+  "scripts": {
+    "test": "lab"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/wreck": "^15.0.0",
+    "fastify": "^2.1.0",
+    "lodash": "^4.17.11"
+  },
+  "devDependencies": {
+    "code": "^5.2.4",
+    "lab": "^18.0.2",
+    "proxyquire": "^2.1.0",
+    "seneca": "^3.8.4",
+    "seneca-promisify": "^0.7.1"
+  }
+}
