@@ -1,6 +1,6 @@
 {
   "name": "seneca-divy",
-  "version": "0.1.0-rc.2",
+  "version": "0.1.0-rc.3",
   "description": "A seneca plugin to intergrate with the divy service mesh",
   "main": "seneca-divy.js",
   "scripts": {
