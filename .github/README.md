@@ -13,20 +13,29 @@ This is the easiest way to connect your seneca service to a divy proxy. Check ou
 npm install seneca-divy
 ```
 
-`seneca-divy` depends on `seneca-promisify` so be sure to add that
-if you do not have it.
-
-```bash
-npm install seneca-promisify
-```
-
 ## Usage (with usrv)
 
-[todo]
+The easiest way to get start with divy and seneca is to use the usrv service container. With that all you have to do is add your listen configuration and your all set.
+
+**srvfile**
+
+```
+module.exports = (config) => {
+  config.transport.listen = [{pin: 'foo:bar'}]
+  return config
+}
+```
 
 ## Usage (without usrv)
 
 If you are not using [usrv](https://www.npmjs.com/package/usrv) as a service container then do the following:
+
+`seneca-divy` depends on `seneca-promisify` so be sure to add that
+if you do not have it. `usrv` takes care of this for you but if your not using it you will need to install dependency on your own.
+
+```bash
+npm install seneca-promisify
+```
 
 First, you will need register `seneca-divy` as a plugin. Lets assume you have your service definition in `index.js`. The minimal config needed is telling divy what messages you want to send through the proxy. This is done by providing listen configuration.
 
@@ -144,4 +153,4 @@ For now, you cannot use any other transport within the application layer when us
 
 ### Thanks
 
-**usrv** would not be possible without the valuable open-source work of projects in the community. We would like to extend a special thank-you to [Richard Rodger](http://www.richardrodger.com/) and [Seneca](https://github.com/senecajs/seneca).
+**seneca-divy** would not be possible without the valuable open-source work of projects in the community. We would like to extend a special thank-you to [Richard Rodger](http://www.richardrodger.com/) and [Seneca](https://github.com/senecajs/seneca).
