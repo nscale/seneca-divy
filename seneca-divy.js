@@ -27,7 +27,7 @@ function divy(opts) {
   const HOST = opts.host || process.env.HOST || '127.0.0.1'
   const PROXY_HTTP_PORT = opts.proxyPort || process.env.PROXY_HTTP_PORT || 10000
   const PROXY_HTTP_HOST =
-    opts.proxyHost || process.env.PROXY_HTTP_HOST || 'localhost'
+    opts.proxyHost || process.env.PROXY_HTTP_HOST || '127.0.0.1'
 
   const http = Fastify()
   const tu = seneca.export('transport/utils')
