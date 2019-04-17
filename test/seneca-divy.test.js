@@ -8,7 +8,7 @@ const Seneca = require('seneca')
 const Divy = require('../seneca-divy')
 
 describe('seneca divy', () => {
-  it('exposes pin table via PDR', async () => {
+  it('exposes pin table', async () => {
     const s = makeInstance()
       .message('a:b', () => ({ ok: true }))
       .use(Divy, {
@@ -17,11 +17,32 @@ describe('seneca divy', () => {
 
     const seneca = await s.ready()
 
-    const res = await Wreck.request('get', 'http://127.0.0.1:40000/pdt')
+    const res = await Wreck.request('post', 'http://127.0.0.1:40000/act', {
+      payload: { role: 'transport', export: 'pins' }
+    })
     const body = await Wreck.read(res)
-    const data = JSON.parse(body.toString())
+    const { pintable } = JSON.parse(body.toString())
 
-    expect(data).to.equal([{ pin: 'a:b', model: 'consume', type: 'http' }])
+    expect(pintable).to.equal([{ pin: 'a:b', model: 'consume', type: 'http' }])
+    s.close()
+  })
+
+  it('listens for liveness check', async () => {
+    const s = makeInstance()
+      .message('a:b', () => ({ ok: true }))
+      .use(Divy, {
+        listen: [{ pin: 'a:b' }]
+      })
+
+    const seneca = await s.ready()
+
+    const res = await Wreck.request('post', 'http://127.0.0.1:40000/act', {
+      payload: { role: 'transport', check: 'live' }
+    })
+    const body = await Wreck.read(res)
+    const msg = JSON.parse(body.toString())
+
+    expect(msg).to.equal({ ok: true })
     s.close()
   })
 
@@ -46,7 +67,7 @@ describe('seneca divy', () => {
     s.close()
   })
 
-  it('doenst intercept local messages', async () => {
+  it('doesnt intercept local messages', async () => {
     const s = makeInstance()
       .message('a:b', async function ab() {
         const out = this.post('c:d')

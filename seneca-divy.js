@@ -21,13 +21,15 @@ const Wreck = require('@hapi/wreck')
 const _ = require('lodash')
 const resolvePinTable = require('./lib/resolve-pin-table')
 
+const env = process.env
+let live = false
+
 function divy(opts) {
   const seneca = this
-  const PORT = opts.port || process.env.PORT || 40000
-  const HOST = opts.host || process.env.HOST || '127.0.0.1'
-  const PROXY_HTTP_PORT = opts.proxyPort || process.env.PROXY_HTTP_PORT || 10000
-  const PROXY_HTTP_HOST =
-    opts.proxyHost || process.env.PROXY_HTTP_HOST || '127.0.0.1'
+  const PORT = opts.port || env.PORT || 40000
+  const HOST = opts.host || env.HOST || '127.0.0.1'
+  const PROXY_HTTP_PORT = opts.proxyPort || env.PROXY_HTTP_PORT || 10000
+  const PROXY_HTTP_HOST = opts.proxyHost || env.PROXY_HTTP_HOST || '127.0.0.1'
 
   const http = Fastify()
   const tu = seneca.export('transport/utils')
@@ -36,12 +38,12 @@ function divy(opts) {
   seneca.depends('promisify')
   seneca.message('init:divy', init)
   seneca.message('role:transport,cmd:client', client)
+  seneca.message('role:transport,export:pins', exportPins)
+  seneca.message('role:transport,check:live', liveness)
   seneca.message('role:seneca,cmd:close', close)
 
   async function init(msg) {
     const seneca = this
-
-    http.route({ method: 'GET', url: '/pdt', handler: async () => pintable })
 
     http.route({
       method: 'POST',
@@ -95,6 +97,14 @@ function divy(opts) {
     return { send }
   }
 
+  async function exportPins(msg) {
+    return { pintable }
+  }
+
+  async function liveness(msg) {
+    return { ok: true }
+  }
+
   async function close(msg) {
     const seneca = this
     await http.close()
@@ -105,11 +115,13 @@ function divy(opts) {
 function onPreload() {
   const self = this
 
-  self.listen = listenFactory
-
-  function listenFactory(msg) {
+  self.listen = function listenFactory(msg) {
     throw Error('divy doesnt support calling listen directly')
   }
+
+  self.ready(function() {
+    live = true
+  })
 }
 
 function parseJSON(data) {
